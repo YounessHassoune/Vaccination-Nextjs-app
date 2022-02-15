@@ -1,0 +1,30 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+yarn run prettier:check ||
+(
+    echo '🤢🤮 Your styling looks disgusting. 🤢🤮'
+    false;
+)
+
+yarn run check:types ||
+(
+    echo '❌🤡 Your typing looks disgusting. ❌🤡'
+    false;
+)
+
+yarn run check:lint ||
+(
+    echo '👋😤 Get that weak shit out of here! ESLint Check Failed 👋😤'
+    false; 
+)
+
+echo '🤔🤔 Code looks good Trying to build now. 🤔🤔'
+
+yarn  build ||
+(
+    echo '🔨❌  build failed  🔨❌'
+    false;
+)
+
+echo '✅✅ committing this now ... ✅✅'
