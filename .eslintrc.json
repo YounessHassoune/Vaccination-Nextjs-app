@@ -10,6 +10,7 @@
     }
   ],
   "rules": {
+    "no-underscore-dangle": "off",
     "jsx-a11y/label-has-associated-control": [
       2,
       {

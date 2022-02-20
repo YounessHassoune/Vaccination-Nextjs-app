@@ -10,9 +10,7 @@ export type IMainProps = {
 const Main: FC<IMainProps> = ({ meta, children }) => (
   <div className="">
     {meta}
-    <div className="w-screen h-screen flex justify-center items-center">
-      {children}
-    </div>
+    <div className="w-screen h-screen ">{children}</div>
   </div>
 )
 

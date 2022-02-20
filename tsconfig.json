@@ -19,7 +19,9 @@
       "@/styles/*": ["./src/styles/*"],
       "@/utils/*": ["./src/utils/*"],
       "@/layout/*": ["./src/layout/*"],
-      "@/template/*": ["./src/template/*"]
+      "@/template/*": ["./src/template/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/models/*": ["./src/models/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
