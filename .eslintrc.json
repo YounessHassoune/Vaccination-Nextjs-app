@@ -9,6 +9,9 @@
       }
     }
   ],
+  "globals": {
+    "JSX": true
+  },
   "rules": {
     "no-underscore-dangle": "off",
     "react/jsx-boolean-value": "off",

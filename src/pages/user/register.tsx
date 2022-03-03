@@ -9,17 +9,19 @@ import Button from "@mui/material/Button"
 import Typography from "@mui/material/Typography"
 import PersonalInformationForm from "@/components/Forms/PersonalInformationForm"
 import CenterInformation from "@/components/Forms/CenterInformation"
-import { AppBar, Toolbar } from "@mui/material"
+import SurveyForm from "@/components/Forms/SurveyForm"
+import CustomAppBar from "@/components/AppBar"
 
 interface ISteps {
   [key: number]: React.ReactNode
 }
 
 const Register: FC = () => {
-  const steps = ["personal information", "choose center"]
+  const steps = ["personal information", "medical information", "choose center"]
   const stepContent: ISteps = {
     0: <PersonalInformationForm />,
-    1: <CenterInformation />,
+    1: <SurveyForm />,
+    2: <CenterInformation />,
   }
   const [activeStep, setActiveStep] = useState(0)
 
@@ -36,24 +38,7 @@ const Register: FC = () => {
   }
   return (
     <>
-      <AppBar
-        position="absolute"
-        color="primary"
-        elevation={0}
-        sx={{
-          position: "relative",
-          borderBottom: t => `1px solid ${t.palette.divider}`,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap>
-            Covid Vaccination
-          </Typography>
-        </Toolbar>
-      </AppBar>
+      <CustomAppBar title="Covid Vaccnation" />
       <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
         <Paper
           variant="outlined"
@@ -69,13 +54,8 @@ const Register: FC = () => {
               </Step>
             ))}
           </Stepper>
-
-          {/* {activeStep === steps.length ? (
-          console.log("tnakt")
-        ) : ( */}
           <>
             {stepContent[activeStep]}
-
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
               {activeStep !== 0 && (
                 <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
@@ -91,7 +71,6 @@ const Register: FC = () => {
               </Button>
             </Box>
           </>
-          {/* )} */}
         </Paper>
       </Container>
     </>

@@ -16,12 +16,12 @@ const CenterInformation: FC = () => (
     <Grid container spacing={3}>
       <Grid item xs={12}>
         <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Age</InputLabel>
+          <InputLabel id="region">Region</InputLabel>
           <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
+            labelId="region"
+            id="region"
             // value={age}
-            label="Age"
+            label="Region"
             // onChange={handleChange}
           >
             <MenuItem value={10}>Ten</MenuItem>
@@ -32,12 +32,12 @@ const CenterInformation: FC = () => (
       </Grid>
       <Grid item xs={12}>
         <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Age</InputLabel>
+          <InputLabel id="center">Center</InputLabel>
           <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
+            labelId="center"
+            id="center"
             // value={age}
-            label="Age"
+            label="Center"
             // onChange={handleChange}
           >
             <MenuItem value={10}>Ten</MenuItem>
