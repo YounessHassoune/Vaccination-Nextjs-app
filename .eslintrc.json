@@ -11,6 +11,8 @@
   ],
   "rules": {
     "no-underscore-dangle": "off",
+    "react/jsx-boolean-value": "off",
+    "no-console": "off",
     "jsx-a11y/label-has-associated-control": [
       2,
       {

@@ -21,7 +21,8 @@
       "@/layout/*": ["./src/layout/*"],
       "@/template/*": ["./src/template/*"],
       "@/components/*": ["./src/components/*"],
-      "@/models/*": ["./src/models/*"]
+      "@/models/*": ["./src/models/*"],
+      "@/lib/*": ["./src/lib/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
