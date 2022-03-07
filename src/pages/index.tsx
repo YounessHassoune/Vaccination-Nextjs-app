@@ -6,8 +6,14 @@ import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as Yup from "yup"
 import moment from "moment"
+import toast, { Toaster } from "react-hot-toast"
+import { loggedUser } from "src/app/features/user/userSlice"
+import { useAppDispatch } from "src/app/hooks"
+import { useRouter } from "next/router"
 
 const Home: FC = () => {
+  const dispatch = useAppDispatch()
+  const router = useRouter()
   const validationSchema = Yup.object().shape({
     cin: Yup.string().required("cin is required"),
     birthday: Yup.string()
@@ -19,17 +25,37 @@ const Home: FC = () => {
   const { errors } = formState
 
   const onSubmit = async (data: any) => {
-    console.log(data)
-    // const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL as string
-    // const res = await fetch(`${BACKEND_URL}/user/${data.cin}/${data.date}`)
-    // const dt = await res.json()
-    // if (dt) {
-    //   router.push(`/shot`)
-    // }
+    toast.loading("loading...")
+    if (formState.isSubmitting) {
+      return
+    }
+    const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL as string
+    const res = await fetch(`${BACKEND_URL}/user/find`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+    const dt = await res.json()
+    if (dt.errorBirthday) {
+      toast.dismiss()
+      toast.error(dt.errorBirthday)
+    } else {
+      toast.dismiss()
+      console.log(dt)
+      if (dt.errorCin) {
+        dispatch(loggedUser(data))
+        router.push("/user/register")
+      } else {
+        dispatch(loggedUser(dt))
+      }
+    }
   }
 
   return (
     <div className="w-screen h-screen flex  justify-center items-center  ">
+      <Toaster />
       <div className="w-[40%] xl:w-[40%] lg:w-[60%] md:w-[60%] sm:w-full xs:w-full ">
         <Box
           sx={{
@@ -67,6 +93,11 @@ const Home: FC = () => {
             <TextField
               type="date"
               {...register("birthday")}
+              InputProps={{
+                inputProps: { max: new Date().toISOString().substring(0, 10) },
+              }}
+              label="Birthday"
+              defaultValue={new Date().toISOString().substring(0, 10)}
               margin="normal"
               error={errors.birthday?.message.length > 0}
               helperText={errors.birthday?.message}
@@ -75,6 +106,7 @@ const Home: FC = () => {
             />
 
             <Button
+              // disabled={formState.isSubmitting}
               type="submit"
               fullWidth
               variant="contained"

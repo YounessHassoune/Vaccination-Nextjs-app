@@ -1,14 +1,24 @@
-import React, { FC, useEffect } from "react"
+import React, { FC } from "react"
 import { Grid, TextField, Typography } from "@mui/material"
+import { IPersonalInfo } from "@/utils/types"
 
-const PersonalInformationForm: FC = () => {
-  useEffect(() => {
-    console.log("component 1 mounted")
-    return () => {
-      console.log("component 1 unmounted fuck")
+interface props {
+  // eslint-disable-next-line no-unused-vars
+  setPersonalInformations: (value: IPersonalInfo) => void
+  personalInformations: IPersonalInfo
+}
+const PersonalInformationForm: FC<props> = ({
+  setPersonalInformations,
+  personalInformations,
+}) => {
+  const handleChange =
+    (prop: keyof IPersonalInfo) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setPersonalInformations({
+        ...personalInformations,
+        [prop]: event.target.value,
+      })
     }
-  }, [])
-
   return (
     <>
       <Typography variant="h6" gutterBottom>
@@ -17,35 +27,38 @@ const PersonalInformationForm: FC = () => {
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <TextField
+            value={personalInformations.name}
             required
             id="fullName"
             name="fullName"
             label="Full Name"
             fullWidth
-            autoComplete="fullName"
             variant="outlined"
+            onChange={handleChange("name")}
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
+            value={personalInformations.address}
             required
             id="address"
             name="address"
             label="Address"
             fullWidth
-            autoComplete="address"
             variant="outlined"
+            onChange={handleChange("address")}
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
+            value={personalInformations.phone}
             required
             id="phone"
             name="phone"
             label="Phone"
             fullWidth
-            autoComplete="phone"
             variant="outlined"
+            onChange={handleChange("phone")}
           />
         </Grid>
       </Grid>

@@ -11,6 +11,7 @@ import PersonalInformationForm from "@/components/Forms/PersonalInformationForm"
 import CenterInformation from "@/components/Forms/CenterInformation"
 import SurveyForm from "@/components/Forms/SurveyForm"
 import CustomAppBar from "@/components/AppBar"
+import { IPersonalInfo, ISurvey } from "@/utils/types"
 
 interface ISteps {
   [key: number]: React.ReactNode
@@ -18,9 +19,25 @@ interface ISteps {
 
 const Register: FC = () => {
   const steps = ["personal information", "medical information", "choose center"]
+  const [personalInformations, setPersonalInformations] =
+    useState<IPersonalInfo>({
+      name: "",
+      address: "",
+      phone: "",
+    })
+  const [questions, setQuestions] = useState<ISurvey>({
+    first: false,
+    second: false,
+  })
+
   const stepContent: ISteps = {
-    0: <PersonalInformationForm />,
-    1: <SurveyForm />,
+    0: (
+      <PersonalInformationForm
+        personalInformations={personalInformations}
+        setPersonalInformations={setPersonalInformations}
+      />
+    ),
+    1: <SurveyForm questions={questions} setQuestions={setQuestions} />,
     2: <CenterInformation />,
   }
   const [activeStep, setActiveStep] = useState(0)

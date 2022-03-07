@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react"
+import React, { useState } from "react"
 import { styled } from "@mui/material/styles"
 import MuiDrawer from "@mui/material/Drawer"
 import Box from "@mui/material/Box"
@@ -18,6 +18,8 @@ import DashboardIcon from "@mui/icons-material/Dashboard"
 import QueryStatsIcon from "@mui/icons-material/QueryStats"
 import Stats from "@/components/stats/Stats"
 import Centers from "@/components/centers/Centers"
+import { NextPage } from "next"
+import { regions } from "@/utils/types"
 
 const drawerWidth: number = 240
 
@@ -69,7 +71,11 @@ const Drawer = styled(MuiDrawer, {
   },
 }))
 
-const Dashboard: FC = () => {
+interface props {
+  data: regions
+}
+
+const Dashboard: NextPage<props> = ({ data }) => {
   const [open, setOpen] = useState(false)
   const toggleDrawer = () => {
     setOpen(!open)
@@ -159,7 +165,7 @@ const Dashboard: FC = () => {
             {selectedIndex === 0 && (
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <Centers />
+                  <Centers regionsData={data} />
                 </Paper>
               </Grid>
             )}
@@ -175,6 +181,17 @@ const Dashboard: FC = () => {
       </Box>
     </Box>
   )
+}
+
+export async function getServerSideProps() {
+  const REGION_URLL = process.env.NEXT_PUBLIC_REGION_URL as string
+  const res = await fetch(REGION_URLL)
+  const data: regions = await res.json()
+  console.log(data)
+
+  return {
+    props: { data },
+  }
 }
 
 export default Dashboard
