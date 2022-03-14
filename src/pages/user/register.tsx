@@ -11,13 +11,21 @@ import PersonalInformationForm from "@/components/Forms/PersonalInformationForm"
 import CenterInformation from "@/components/Forms/CenterInformation"
 import SurveyForm from "@/components/Forms/SurveyForm"
 import CustomAppBar from "@/components/AppBar"
-import { IPersonalInfo, ISurvey } from "@/utils/types"
+import { IPersonalInfo, ISurvey, regions } from "@/utils/types"
+import { useAppSelector } from "src/app/hooks"
+import { RootState } from "src/app/store"
+import { useRouter } from "next/router"
 
 interface ISteps {
   [key: number]: React.ReactNode
 }
+interface props {
+  data: regions
+}
 
-const Register: FC = () => {
+const Register: FC<props> = ({ data }) => {
+  const router = useRouter()
+  const user = useAppSelector((state: RootState) => state.user.payload)
   const steps = ["personal information", "medical information", "choose center"]
   const [personalInformations, setPersonalInformations] =
     useState<IPersonalInfo>({
@@ -29,6 +37,7 @@ const Register: FC = () => {
     first: false,
     second: false,
   })
+  const [center, setCenter] = useState("")
 
   const stepContent: ISteps = {
     0: (
@@ -38,15 +47,49 @@ const Register: FC = () => {
       />
     ),
     1: <SurveyForm questions={questions} setQuestions={setQuestions} />,
-    2: <CenterInformation />,
+    2: <CenterInformation regionsData={data} setCenter={setCenter} />,
   }
   const [activeStep, setActiveStep] = useState(0)
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (activeStep === steps.length - 1) {
-      console.log("send request")
+      const createUser = { ...personalInformations, ...user }
+      const BACKEND_UR = process.env.NEXT_PUBLIC_BACKEND_URL as string
+      const res = await fetch(`${BACKEND_UR}/user/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(createUser),
+      })
+      const createdUser = await res.json()
+      if (createdUser?._id) {
+        const vaccination = { center, name: "shot1", user: createdUser._id }
+        const res2 = await fetch(`${BACKEND_UR}/vaccin/create`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(vaccination),
+        })
+        const createdVaccin = await res2.json()
+        if (createdVaccin._id) {
+          await fetch(`${BACKEND_UR}/user/updateshots`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userId: createdVaccin.user,
+              shotId: createdVaccin._id,
+            }),
+          })
+          router.push("/")
+        }
+      }
       return
     }
+
     setActiveStep(activeStep + 1)
   }
 
@@ -94,4 +137,14 @@ const Register: FC = () => {
   )
 }
 
+export async function getServerSideProps() {
+  const REGION_URLL = process.env.NEXT_PUBLIC_REGION_URL as string
+  const res = await fetch(REGION_URLL)
+  const data: regions = await res.json()
+  console.log(data)
+
+  return {
+    props: { data },
+  }
+}
 export default Register

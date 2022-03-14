@@ -4,6 +4,17 @@ export interface region {
   ville?: string
 }
 
+export interface center {
+  address: string
+  city: number
+  createdAt: string
+  name: string
+  region: number
+  updatedAt: string
+  _id: string
+}
+export type centers = center[]
+
 export type regions = region[]
 
 export interface IPersonalInfo {

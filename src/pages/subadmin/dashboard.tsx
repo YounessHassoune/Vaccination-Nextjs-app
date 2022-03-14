@@ -14,11 +14,12 @@ import Paper from "@mui/material/Paper"
 import MenuIcon from "@mui/icons-material/Menu"
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft"
 import ListItems from "@/components/ListItems/ListItems"
+import DashboardIcon from "@mui/icons-material/Dashboard"
 import QueryStatsIcon from "@mui/icons-material/QueryStats"
 import Stats from "@/components/stats/Stats"
-import GroupAddIcon from "@mui/icons-material/GroupAdd"
+import Centers from "@/components/centers/Centers"
 import { NextPage } from "next"
-import Managers from "@/components/Managers/Managers"
+import { regions } from "@/utils/types"
 
 const drawerWidth: number = 240
 
@@ -70,13 +71,16 @@ const Drawer = styled(MuiDrawer, {
   },
 }))
 
-const Dashboard: NextPage = () => {
+interface props {
+  data: regions
+}
+
+const Dashboard: NextPage<props> = ({ data }) => {
   const [open, setOpen] = useState(false)
   const toggleDrawer = () => {
     setOpen(!open)
   }
   const [selectedIndex, setSelectedIndex] = useState(0)
-
   const handleListItemClick = (index: number) => {
     setSelectedIndex(index)
   }
@@ -130,8 +134,8 @@ const Dashboard: NextPage = () => {
           <div aria-hidden="true" onClick={() => handleListItemClick(0)}>
             <ListItems
               selected={selectedIndex === 0}
-              title="Managers"
-              icon={<GroupAddIcon />}
+              title="Centers"
+              icon={<DashboardIcon />}
             />
           </div>
           <div aria-hidden="true" onClick={() => handleListItemClick(1)}>
@@ -161,7 +165,7 @@ const Dashboard: NextPage = () => {
             {selectedIndex === 0 && (
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <Managers />
+                  <Centers regionsData={data} />
                 </Paper>
               </Grid>
             )}
@@ -177,6 +181,17 @@ const Dashboard: NextPage = () => {
       </Box>
     </Box>
   )
+}
+
+export async function getServerSideProps() {
+  const REGION_URLL = process.env.NEXT_PUBLIC_REGION_URL as string
+  const res = await fetch(REGION_URLL)
+  const data: regions = await res.json()
+  console.log(data)
+
+  return {
+    props: { data },
+  }
 }
 
 export default Dashboard

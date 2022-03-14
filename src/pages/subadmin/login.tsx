@@ -1,36 +1,32 @@
 import { FC } from "react"
 import { Box, Button, TextField } from "@mui/material"
-import Logo from "public/gif/logo.gif"
+import admin from "public/gif/login.gif"
 import Image from "next/image"
+import { useRouter } from "next/router"
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as Yup from "yup"
-import moment from "moment"
 import toast, { Toaster } from "react-hot-toast"
-import { loggedUser } from "src/app/features/user/userSlice"
-import { useAppDispatch } from "src/app/hooks"
-import { useRouter } from "next/router"
 
-const Home: FC = () => {
-  const dispatch = useAppDispatch()
+const Login: FC = () => {
   const router = useRouter()
   const validationSchema = Yup.object().shape({
-    cin: Yup.string().required("cin is required"),
-    birthday: Yup.string()
-      .required("date invalid")
-      .test(d => moment().diff(moment(d), "years") >= 12),
+    email: Yup.string()
+      .email("Must be a valid email")
+      .max(255)
+      .required("Email is required"),
+    password: Yup.string().max(255).required("Password is required"),
   })
   const formOptions = { resolver: yupResolver(validationSchema) }
   const { register, handleSubmit, formState } = useForm(formOptions)
   const { errors } = formState
-
   const onSubmit = async (data: any) => {
     toast.loading("loading...")
     if (formState.isSubmitting) {
       return
     }
     const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL as string
-    const res = await fetch(`${BACKEND_URL}/user/find`, {
+    const res = await fetch(`${BACKEND_URL}/admin/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -38,23 +34,20 @@ const Home: FC = () => {
       body: JSON.stringify(data),
     })
     const dt = await res.json()
-    console.log(dt)
-
-    if (dt.errorBirthday) {
+    if (dt.error) {
       toast.dismiss()
-      toast.error(dt.errorBirthday)
+      toast.error(dt.error)
     } else {
-      toast.dismiss()
-      if (dt.errorCin) {
-        dispatch(loggedUser(data))
-        router.push("/user/register")
+      // eslint-disable-next-line no-lonely-if
+      if (dt.role === "subadmin") {
+        toast.dismiss()
+        router.push("/subadmin/dashboard")
       } else {
-        dispatch(loggedUser(dt))
-        router.push("/user/vaccination")
+        toast.dismiss()
+        router.push("/")
       }
     }
   }
-
   return (
     <div className="w-screen h-screen flex  justify-center items-center  ">
       <Toaster />
@@ -69,7 +62,7 @@ const Home: FC = () => {
         >
           <Image
             alt="vaccination"
-            src={Logo}
+            src={admin}
             className="rounded-ful bg-cove"
             width="250"
             height="250"
@@ -81,40 +74,38 @@ const Home: FC = () => {
             sx={{ mt: 1, width: "100%" }}
           >
             <TextField
-              {...register("cin")}
+              error={errors.email?.message.length > 0}
+              helperText={errors.email?.message}
+              {...register("email")}
               margin="normal"
               required
               fullWidth={true}
-              id="cin"
-              label="Cin"
-              name="cin"
-              error={errors.cin?.message.length > 0}
-              helperText={errors.cin?.message}
+              id="email"
+              label="email"
+              name="email"
+              type="email"
             />
 
             <TextField
-              type="date"
-              {...register("birthday")}
-              InputProps={{
-                inputProps: { max: new Date().toISOString().substring(0, 10) },
-              }}
-              label="Birthday"
-              defaultValue={new Date().toISOString().substring(0, 10)}
+              {...register("password")}
+              error={errors.password?.message.length > 0}
+              helperText={errors.password?.message}
               margin="normal"
-              error={errors.birthday?.message.length > 0}
-              helperText={errors.birthday?.message}
+              required
               fullWidth={true}
-              name="birthday"
+              id="password"
+              label="password"
+              name="password"
+              type="password"
             />
 
             <Button
-              // disabled={formState.isSubmitting}
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2, pt: 2, pb: 2 }}
             >
-              Continue
+              Login
             </Button>
           </Box>
         </Box>
@@ -123,4 +114,4 @@ const Home: FC = () => {
   )
 }
 
-export default Home
+export default Login
