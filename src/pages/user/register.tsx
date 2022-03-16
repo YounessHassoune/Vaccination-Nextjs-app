@@ -63,6 +63,8 @@ const Register: FC<props> = ({ data }) => {
         body: JSON.stringify(createUser),
       })
       const createdUser = await res.json()
+      console.log(createdUser)
+
       if (createdUser?._id) {
         const vaccination = { center, name: "shot1", user: createdUser._id }
         const res2 = await fetch(`${BACKEND_UR}/vaccin/create`, {
@@ -141,7 +143,6 @@ export async function getServerSideProps() {
   const REGION_URLL = process.env.NEXT_PUBLIC_REGION_URL as string
   const res = await fetch(REGION_URLL)
   const data: regions = await res.json()
-  console.log(data)
 
   return {
     props: { data },

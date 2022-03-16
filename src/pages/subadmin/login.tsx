@@ -44,7 +44,7 @@ const Login: FC = () => {
         router.push("/subadmin/dashboard")
       } else {
         toast.dismiss()
-        router.push("/")
+        router.push("/admin/dashboard")
       }
     }
   }
